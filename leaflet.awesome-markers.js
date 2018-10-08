@@ -1,11 +1,3 @@
-/*
-  Leaflet.AwesomeNumberMarkers, a plugin that adds number markers for Leaflet
-  http://leafletjs.com
-  https://github.com/zahidul-islam
-*/
-
-/*global L*/
-
 (function (){
   "use strict";
   L.AwesomeNumberMarkers = L.Icon.extend({
