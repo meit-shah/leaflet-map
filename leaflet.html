@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Map Marker</title>
+   <meta charset="utf-8">
+   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+   <!-- leaflet css plugin -->
+   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.3.4/dist/leaflet.css"
+   integrity="sha512-puBpdR0798OZvTTbP4A8Ix/l+A4dHDD0DGqYW6RQ+9jxkRFclaxxQb/SJAWZfWAkuyeQUytO7+7N4QKrDh+drA=="
+   crossorigin=""/>
+   <!-- leaflet js plugin -->
+   <script src="https://unpkg.com/leaflet@1.3.4/dist/leaflet.js"
+   integrity="sha512-nMMmRyTVoLYqjP9hrbed9S+FzjZHW5gY1TWCHA5ckwXZBadntCNs8kEqAWdrb9O7rxbCaA4lKTIWjDXZxflOcA=="
+   crossorigin=""></script>
+   <!-- leaflet awesome marker plugin js and css -->
+   <link rel="stylesheet" type="text/css" href="leaflet.awesome-markers.css">
+   <script type="text/javascript" src="leaflet.awesome-markers.js"></script>
+   <!-- polyline decorator plugin -->
+   <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet-polylinedecorator/1.1.0/leaflet.polylineDecorator.min.js"></script>
+   <!-- custom css -->
+   <style type="text/css">
+     @media screen and (max-width: 700px){
+      #mapid{
+        width: 100vw;
+        height: 40vh;
+      }
+     }
+   </style>
+</head>
+<body style="margin:0;padding:0;">
+
+  <div id="mapid" style="width:100vw;height:50vh;"></div>
+   
+  <div id="inputField" style="text-align: center;">
+    <textarea rows="10" cols="50" id="myTextArea" style="margin:50px 0px 30px 0px;" placeholder="Enter (latitude,longitude) here...[PS:Spaces are allowed between the inputs]"></textarea>
+    <br><button id="getPathButton" onclick="embedData()">Get Path</button>
+    <!-- <button id="clearButton" onclick="clearData()">Clear Path</button> -->
+  </div>
+
+<script type="text/javascript">
+	var mymap = L.map('mapid').setView([19.1329383,72.81175830000006], 13); // mapview and initial scale
+	            L.tileLayer('https://api.tiles.mapbox.com/v4/{id}/{z}/{x}/{y}.png?access_token=pk.eyJ1IjoibWFwYm94IiwiYSI6ImNpejY4NXVycTA2emYycXBndHRqcmZ3N3gifQ.rJcFIG214AriISLbB6B5aw', {
+		maxZoom: 48,
+		attribution: 'Map data &copy; <a href="https://www.openstreetmap.org/">OpenStreetMap</a> contributors, ' +
+			'<a href="https://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, ' +
+			'Imagery © <a href="https://www.mapbox.com/">Mapbox</a>',
+		id: 'mapbox.streets'
+	}).addTo(mymap);
+
+var texts, lines, marker, markerBind, polyline, arrowHead;
+
+function getData(){// function to input the data
+  lines = document.getElementById("myTextArea").value.split('\n');
+  texts = [];
+  const startingpoint = "19.109222, 72.880394";//coordinates of andheri office
+  lines.unshift(startingpoint);
+    for(var i = 0;i < lines.length;i++){
+      if(lines[i]===""){
+        continue;
+      }
+      temp = lines[i].split(/[\s,]+/);
+      texts.push(temp);
+    }
+    return texts;
+  }
+
+function embedData(){//function to embed the data, taken from getData function, to the maps.
+  getData();
+// to check if the map has an existing layer in the map
+// if the layers of polyline/arrowHead is present and markerbind length is greater than 0 then remove them 
+// else add the new markers and layers in to the map
+if (mymap.hasLayer(polyline) && mymap.hasLayer(arrowHead) && markerBind.length>0) {
+  for(var i = 0; i < markerBind.length; i++) {
+    mymap.removeLayer(markerBind[i]);//removes all the markers from the map
+  } 
+  mymap.removeLayer(polyline);//removes all the lines connecting the markers from the map
+  mymap.removeLayer(arrowHead);//removes all the arrowheads from the polyline
+  addNewPath();//and add the inputs to the maps
+}else{
+  addNewPath();//add the new inputs to the maps
+}
+}
+
+//function to add new path to the maps
+function addNewPath(){
+    var markerNumberIcon, m;//m is the marker variable
+    marker = [...texts]; //copies the texts array elements to the marker array
+    markerBind = [];// array for adding popup into each of  the marker present on the map 
+      for (var i = 0; i < marker.length; i++) {
+        markerNumberIcon =  new L.AwesomeNumberMarkers({//added leaflet number icon to markers
+            number: i,
+            markerColor: "darkblue"
+        });
+        startEndMarkerIcon = new L.AwesomeNumberMarkers({//adding red icon marker to start and end markers
+          number: i,
+          markerColor: "red"
+        });
+        if (i===0) {
+         m = L.marker(marker[i], {icon: startEndMarkerIcon}).addTo(mymap);
+         m.bindPopup('<b>Starting Point Andheri Office</b>').openPopup();//default starting point
+        }else if(i===marker.length-1){
+         m = L.marker(marker[i], {icon: startEndMarkerIcon}).addTo(mymap);
+         m.bindPopup('<b>End Point '+' Order No.</b>'+(i));
+        }
+        else{
+        m = L.marker(marker[i], {icon: markerNumberIcon}).addTo(mymap);//embed leaflet icon to the marker on the map
+        m.bindPopup('Order No.'+(i)); /*,{closeOnClick: false, autoClose: false});*/
+        }
+        markerBind.push(m);
+    };
+    polyline = L.polyline(marker).addTo(mymap);  // a line connecting each of the markers and adding it to the map
+    arrowHead =  L.polylineDecorator(polyline, {//adds polyline arrowhead to each of the polyline on the map
+    patterns: [
+        {
+            offset: 0,//start of the arrowhead
+            repeat: 85,//repeats the arrowhead at this distance
+            symbol: L.Symbol.arrowHead({pixelSize: 15, polygon: false, pathOptions: {stroke: true}})
+        }
+    ]
+}).addTo(mymap);
+    return arrowHead; //return the path on function call
+}
+
+</script>
+<!-- test the inputs:
+19.1329383,72.81175830000006 
+19.1413404,72.81088120000004
+19.1116579,72.83458199999995
+19.1087053,72.83160780000003
+19.1003699,72.82840199999998
+19.0765617,72.83081709999999
+19.0508149,72.82374329999993
+19.0722011,72.833708
+19.1063489,72.84184110000001
+19.1286973,72.84397960000001
+ -->
+</body>
+</html>
