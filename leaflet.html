@@ -17,23 +17,15 @@
    <!-- polyline decorator plugin -->
    <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet-polylinedecorator/1.1.0/leaflet.polylineDecorator.min.js"></script>
    <!-- custom css -->
-   <style type="text/css">
-     @media screen and (max-width: 700px){
-      #mapid{
-        width: 100vw;
-        height: 40vh;
-      }
-     }
-   </style>
+   <link rel="stylesheet" type="text/css" href="style.css">
 </head>
-<body style="margin:0;padding:0;">
+<body>
 
-  <div id="mapid" style="width:100vw;height:50vh;"></div>
+  <div id="mapid"></div>
    
-  <div id="inputField" style="text-align: center;">
-    <textarea rows="10" cols="50" id="myTextArea" style="margin:50px 0px 30px 0px;" placeholder="Enter (latitude,longitude) here...[PS:Spaces are allowed between the inputs]"></textarea>
-    <br><button id="getPathButton" onclick="embedData()">Get Path</button>
-    <!-- <button id="clearButton" onclick="clearData()">Clear Path</button> -->
+  <div id="inputField">
+    <textarea rows="10" cols="50" id="myTextArea" placeholder="Enter (latitude,longitude) here...[PS:Spaces are allowed between the inputs]"></textarea>
+    <br><button id="getPathButton">Get Path</button> 
   </div>
 
 <script type="text/javascript">
@@ -64,6 +56,9 @@ var texts, lines, marker, markerBind, polyline, arrowHead;
 //     'order_url': 'https://taazakitchen.com/'
 //   },
 // ]
+var getPathButton = document.getElementById('getPathButton');
+getPathButton.addEventListener('click', embedData);
+
 function getData(){// function to input the data
   lines = document.getElementById("myTextArea").value.split('\n');
   texts = [];
@@ -102,37 +97,35 @@ function addNewPath(){
     marker = [...texts]; //copies the texts array elements to the marker array
     markerBind = [];// array for adding popup into each of  the marker present on the map 
       for (var i = 0; i < marker.length; i++) {
-        markerNumberIcon =  new L.AwesomeNumberMarkers({//added leaflet number icon to markers
+          markerNumberIcon =  new L.AwesomeNumberMarkers({//added leaflet number icon to markers
             number: i,
-            markerColor: "darkblue"
-        });
-        startEndMarkerIcon = new L.AwesomeNumberMarkers({//adding red icon marker to start and end markers
-          number: i,
-          markerColor: "red"
-        });
+            markerColor: "darkblue"});
+          startEndMarkerIcon = new L.AwesomeNumberMarkers({//adding red icon marker to start and end markers
+            number: i,
+            markerColor: "red"});
         if (i===0) {
-         m = L.marker(marker[i], {icon: startEndMarkerIcon}).addTo(mymap);
-         m.bindPopup('<b>Starting Point Andheri Office</b>').openPopup();//default starting point
+          m = L.marker(marker[i], {icon: startEndMarkerIcon}).addTo(mymap);
+          m.bindPopup('<b>Starting Point Andheri Office</b>').openPopup();//default starting point
         }else if(i===marker.length-1){
-         m = L.marker(marker[i], {icon: startEndMarkerIcon}).addTo(mymap);
-         m.bindPopup('<b>End Point '+' Order No.</b>'+(i));
+          m = L.marker(marker[i], {icon: startEndMarkerIcon}).addTo(mymap);
+          m.bindPopup('<b>End Point '+' Order No.</b>'+(i)+"<br><a href='https://taazakitchen.com'><b>Order URL</b></a>");
         }
         else{
-        m = L.marker(marker[i], {icon: markerNumberIcon}).addTo(mymap);//embed leaflet icon to the marker on the map
-        m.bindPopup('Order No.'+(i)); /*,{closeOnClick: false, autoClose: false});*/
+           m = L.marker(marker[i], {icon: markerNumberIcon}).addTo(mymap);//embed leaflet icon to the marker on the map
+           m.bindPopup('Order No. '+(i)+"<br><a href='https://taazakitchen.com'><b>Order URL</b></a>"); /*,{closeOnClick: false, autoClose: false});*/
         }
         markerBind.push(m);
-    };
+      };
     polyline = L.polyline(marker).addTo(mymap);  // a line connecting each of the markers and adding it to the map
     arrowHead =  L.polylineDecorator(polyline, {//adds polyline arrowhead to each of the polyline on the map
-    patterns: [
-        {
-            offset: 0,//start of the arrowhead
-            repeat: 85,//repeats the arrowhead at this distance
-            symbol: L.Symbol.arrowHead({pixelSize: 15, polygon: false, pathOptions: {stroke: true}})
-        }
-    ]
-}).addTo(mymap);
+        patterns: [
+                   {
+                      offset: 0,//start of the arrowhead
+                      repeat: 85,//repeats the arrowhead at this distance
+                      symbol: L.Symbol.arrowHead({pixelSize: 15, polygon: false, pathOptions: {stroke: true}})
+                   }
+                  ]
+    }).addTo(mymap);
     return arrowHead; //return the path on function call
 }
 

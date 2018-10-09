@@ -1,0 +1,24 @@
+body{
+	margin: 0;
+	padding: 0;
+}
+
+#mapid{
+	width:100vw;
+	height:50vh;
+} 
+
+#inputField{
+	text-align: center;
+}
+
+#myTextArea{
+	margin:50px 0px 30px 0px;
+}
+
+/*responsive code*/
+ @media screen and (max-width: 700px){
+      #mapid{
+        width: 100vw;
+        height: 40vh;
+ }
