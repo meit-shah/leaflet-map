@@ -38,7 +38,7 @@
 		id: 'mapbox.streets'
 	}).addTo(mymap);
 
-var texts, lines, marker, markerBind, polyline, arrowHead;
+var locationArray, marker, markerBind, polyline, arrowHead;
 // var trip_json = [
 //   {
 //     'location': '19, 20',
@@ -48,7 +48,7 @@ var texts, lines, marker, markerBind, polyline, arrowHead;
 //     'packet_no': 20,
 //   },
 //   {
-//     'location': '19, 20',
+//     'location': '21, 22',
 //     'delivery_sequence': 2,
 //     'user_name': 'Aayush Shah',
 //     'order_total': 222,
@@ -60,43 +60,26 @@ var getPathButton = document.getElementById('getPathButton');
 getPathButton.addEventListener('click', embedData);
 
 function getData(){// function to input the data
-  lines = document.getElementById("myTextArea").value.split('\n');
-  texts = [];
-  const startingpoint = "19.109222, 72.880394";//coordinates of andheri office
-  lines.unshift(startingpoint);
-    for(var i = 0;i < lines.length;i++){
-      if(lines[i]===""){
+  var inputValues = document.getElementById("myTextArea").value.split('\n');//if input contains line breaks then make input after line break a new input and add it to array as a new index
+  locationArray = []; // used to store final latLong data
+  const startingpoint = "19.109222, 72.880394";//coordinates of andheri office shoudl be starting point always
+  inputValues.unshift(startingpoint);
+    for(var i = 0;i < inputValues.length;i++){
+      if(inputValues[i]===""){//if spaces are present in the input then ignore and continue to next input
         continue;
       }
-      temp = lines[i].split(/[\s,]+/);
-      texts.push(temp);
+      temp = inputValues[i].split(/[\s,]+/);//temp array that stores input values as string but if the string has spaces or , in between them then again split them and make them a unique input
+      locationArray.push(temp);//finally add the inputs to a new array and return it to the calling function
     }
-    return texts;
+    return locationArray;
   }
-
-function embedData(){//function to embed the data, taken from getData function, to the maps.
-  getData();
-// to check if the map has an existing layer in the map
-// if the layers of polyline/arrowHead is present and markerbind length is greater than 0 then remove them 
-// else add the new markers and layers in to the map
-if (mymap.hasLayer(polyline) && mymap.hasLayer(arrowHead) && markerBind.length>0) {
-  for(var i = 0; i < markerBind.length; i++) {
-    mymap.removeLayer(markerBind[i]);//removes all the markers from the map
-  } 
-  mymap.removeLayer(polyline);//removes all the lines connecting the markers from the map
-  mymap.removeLayer(arrowHead);//removes all the arrowheads from the polyline
-  addNewPath();//and add the inputs to the maps
-}else{
-  addNewPath();//add the new inputs to the maps lol
-}
-}
 
 //function to add new path to the maps
 function addNewPath(){
     var markerNumberIcon, m;//m is the marker variable
-    marker = [...texts]; //copies the texts array elements to the marker array
+    // marker = [...locationArray]; //copies the locationArray array elements to the marker array
     markerBind = [];// array for adding popup into each of  the marker present on the map 
-      for (var i = 0; i < marker.length; i++) {
+      for (var i = 0; i < locationArray.length; i++) {
           markerNumberIcon =  new L.AwesomeNumberMarkers({//added leaflet number icon to markers
             number: i,
             markerColor: "darkblue"});
@@ -104,19 +87,19 @@ function addNewPath(){
             number: i,
             markerColor: "red"});
         if (i===0) {
-          m = L.marker(marker[i], {icon: startEndMarkerIcon}).addTo(mymap);
+          m = L.marker(locationArray[i], {icon: startEndMarkerIcon}).addTo(mymap);
           m.bindPopup('<b>Starting Point Andheri Office</b>').openPopup();//default starting point
-        }else if(i===marker.length-1){
-          m = L.marker(marker[i], {icon: startEndMarkerIcon}).addTo(mymap);
+        }else if(i===locationArray.length-1){
+          m = L.marker(locationArray[i], {icon: startEndMarkerIcon}).addTo(mymap);
           m.bindPopup('<b>End Point '+' Order No.</b>'+(i)+"<br><a href='https://taazakitchen.com'><b>Order URL</b></a>");
         }
         else{
-           m = L.marker(marker[i], {icon: markerNumberIcon}).addTo(mymap);//embed leaflet icon to the marker on the map
+           m = L.marker(locationArray[i], {icon: markerNumberIcon}).addTo(mymap);//embed leaflet icon to the marker on the map
            m.bindPopup('Order No. '+(i)+"<br><a href='https://taazakitchen.com'><b>Order URL</b></a>"); /*,{closeOnClick: false, autoClose: false});*/
         }
-        markerBind.push(m);
+        markerBind.push(m);//this is important as it helps in updating new paths
       };
-    polyline = L.polyline(marker).addTo(mymap);  // a line connecting each of the markers and adding it to the map
+    polyline = L.polyline(locationArray).addTo(mymap);  // a line connecting each of the markers and adding it to the map
     arrowHead =  L.polylineDecorator(polyline, {//adds polyline arrowhead to each of the polyline on the map
         patterns: [
                    {
@@ -127,6 +110,23 @@ function addNewPath(){
                   ]
     }).addTo(mymap);
     return arrowHead; //return the path on function call
+}
+
+function embedData(){//function to embed the data, taken from getData function, to the maps.
+  getData();
+// to check if the map has an existing layer in the map
+// if the layers of polyline/arrowHead is present and markerbind length is greater than 0 then remove them 
+// else add the new markers and layers in to the map
+if (mymap.hasLayer(polyline) && mymap.hasLayer(arrowHead) && markerBind.length>0) {
+  for(var i = 0; i < markerBind.length; i++) {
+    mymap.removeLayer(markerBind[i]);//removes all the markers from the map
+  } 
+  mymap.removeLayer(polyline);//removes all the inputValues connecting the markers from the map
+  mymap.removeLayer(arrowHead);//removes all the arrowheads from the polyline
+  addNewPath();//and add the latest inputs to the maps
+}else{
+  addNewPath();//add the new inputs to the maps as there are no existing layers present
+  }
 }
 
 </script>
