@@ -133,13 +133,13 @@ function addNewPath(){
           m.bindPopup('<b>Starting Point Andheri Office</b>').openPopup();//default starting point
         }else if(i===locationArray.length-1){
           m = L.marker(locationArray[i], {icon: startEndMarkerIcon}).addTo(mymap);
-          popUpDetails = 'End Point <b>Order No</b>: '+(i)+"<br><b>Username</b>:"+trip_json[i].user_name+"<br><b>Order Total</b>:"+trip_json[i].order_total+"<br><b>Packet No</b>:"+trip_json[i].packet_no+"<br><a class='orderUrl'><b>Order URL</b></a>";
+          popUpDetails = 'End Point <b>Order No</b>: '+(i)+"<br><b>Username</b>:"+trip_json[i-1].user_name+"<br><b>Order Total</b>:"+trip_json[i-1].order_total+"<br><b>Packet No</b>:"+trip_json[i-1].packet_no+"<br><a class='orderUrl'>"+trip_json[i-1].order_url+"</a>";//details of the last order in the marker popup
           m.bindPopup(popUpDetails);
         }
         else{
            m = L.marker(locationArray[i], {icon: markerNumberIcon}).addTo(mymap);//embed leaflet icon to the marker on the map
            document.getElementsByClassName("orderUrl").href=trip_json[i].order_url;//adding url to each of the marker popup from the array of objects
-           popUpDetails = '<b>Order No</b>: '+(i)+"<br><b>Username</b>:"+trip_json[i].user_name+"<br><b>Order Total</b>:"+trip_json[i].order_total+"<br><b>Packet No</b>:"+trip_json[i].packet_no+"<br><a class='orderUrl'><b>Order URL</b></a>";
+           popUpDetails = '<b>Order No</b>: '+(i)+"<br><b>Username</b>:"+trip_json[i].user_name+"<br><b>Order Total</b>:"+trip_json[i].order_total+"<br><b>Packet No</b>:"+trip_json[i].packet_no+"<br><a class='orderUrl'>"+trip_json[i].order_url+"</a>";//details shown in the all the marker popups in the map
            m.bindPopup(popUpDetails); /*,{closeOnClick: false, autoClose: false});*/
         }
         markerBind.push(m);//this is important as it helps in updating new paths
