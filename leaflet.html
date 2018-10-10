@@ -85,7 +85,6 @@ var getPathButton = document.getElementById('getPathButton');
 getPathButton.addEventListener('click', embedData);
 
 function storeLocationData(){
-	var trip_json_location_array=[];//array that stores location property value of each object of trip_json_array
 	var locationPropValues=""; //var checks for location property in each of the objects in the trip_json_array and pushes it futher to the trip_json_location_array
 	for(var i=0;i<trip_json.length;i++){
 	  locationPropValues+=trip_json[i].location+'\n'; 
