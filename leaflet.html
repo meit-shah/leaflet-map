@@ -84,25 +84,17 @@ var trip_json = [//input data from the csv order file
 var getPathButton = document.getElementById('getPathButton');
 getPathButton.addEventListener('click', embedData);
 
-function testData(){
-
-var trip_json_location_array=[];//array that stores location property value of each object of trip_json_array
-var testcheck; //checks for location property in each of the objects in the trip_json_array and pushes it futher to the trip_json_location_array
-for(var i=0;i<trip_json.length;i++){
-  testcheck=trip_json[i].location;
-  trip_json_location_array.push(testcheck);
-}
-console.log(trip_json_location_array);//prints trip_json_location_array
-
-  var locationTracker="";//variable that gets all the input data of location from trip_json_location_array in the form of string
-  for(var i=0;i<trip_json_location_array.length;i++){
-   locationTracker += (trip_json_location_array[i]+'\n');//gets all the inputs of the trip_json_location_array
-  }
-  return locationTracker;
+function storeLocationData(){
+	var trip_json_location_array=[];//array that stores location property value of each object of trip_json_array
+	var locationPropValues=""; //var checks for location property in each of the objects in the trip_json_array and pushes it futher to the trip_json_location_array
+	for(var i=0;i<trip_json.length;i++){
+	  locationPropValues+=trip_json[i].location+'\n'; 
+	}
+	  return locationPropValues;
 }
 
-function getData(){// function to input the data
-  var testInput =  document.getElementById("myTextArea").value = testData();//adding the string of location inputs
+function getData(){// function that takes the json data in string format and pushes it in array
+  var testInput =  document.getElementById("myTextArea").value = storeLocationData();//stores location in string values
   var inputValues = testInput.split('\n');//if input contains line breaks then make input after line break a new input and add it to array as a new index
   locationArray = []; // used to store final latLong data
   const startingpoint = "19.109222, 72.880394";//coordinates of andheri office should be starting point always
