@@ -66,10 +66,18 @@ var trip_json = [//input data from the csv order file
     },
     {
     'location': '19.1087053,72.83160780000003',
-    'delivery_sequence': 3,
+    'delivery_sequence': 4,
     'user_name': 'Hitesh Patel',
     'order_total': 444,
     'packet_no': 13,
+    'order_url': 'https://taazakitchen.com/blog'
+    },
+    {
+    'location': '19.1003699,72.82840199999998',
+    'delivery_sequence': 5,
+    'user_name': 'Yogesh Atak',
+    'order_total': 1234,
+    'packet_no': 007,
     'order_url': 'https://taazakitchen.com/blog'
     }
 ]
@@ -111,8 +119,7 @@ function getData(){// function to input the data
 
 //function to add new path to the maps
 function addNewPath(){
-    var markerNumberIcon, m;//m is the marker variable
-    // marker = [...locationArray]; //copies the locationArray array elements to the marker array
+    var markerNumberIcon, m, popUpDetails;//m is the marker variable
     markerBind = [];// array for adding popup into each of  the marker present on the map 
       for (var i = 0; i < locationArray.length; i++) {
           markerNumberIcon =  new L.AwesomeNumberMarkers({//added leaflet number icon to markers
@@ -126,11 +133,14 @@ function addNewPath(){
           m.bindPopup('<b>Starting Point Andheri Office</b>').openPopup();//default starting point
         }else if(i===locationArray.length-1){
           m = L.marker(locationArray[i], {icon: startEndMarkerIcon}).addTo(mymap);
-          m.bindPopup('<b>End Point '+' Order No.</b>'+(i)+"<br><a href='https://taazakitchen.com'><b>Order URL</b></a>");
+          popUpDetails = 'End Point <b>Order No</b>: '+(i)+"<br><b>Username</b>:"+trip_json[i].user_name+"<br><b>Order Total</b>:"+trip_json[i].order_total+"<br><b>Packet No</b>:"+trip_json[i].packet_no+"<br><a class='orderUrl'><b>Order URL</b></a>";
+          m.bindPopup(popUpDetails);
         }
         else{
            m = L.marker(locationArray[i], {icon: markerNumberIcon}).addTo(mymap);//embed leaflet icon to the marker on the map
-           m.bindPopup('Order No. '+(i)+"<br><a id='orderUrl'><b>Order URL</b></a>"); /*,{closeOnClick: false, autoClose: false});*/
+           document.getElementsByClassName("orderUrl").href=trip_json[i].order_url;//adding url to each of the marker popup from the array of objects
+           popUpDetails = '<b>Order No</b>: '+(i)+"<br><b>Username</b>:"+trip_json[i].user_name+"<br><b>Order Total</b>:"+trip_json[i].order_total+"<br><b>Packet No</b>:"+trip_json[i].packet_no+"<br><a class='orderUrl'><b>Order URL</b></a>";
+           m.bindPopup(popUpDetails); /*,{closeOnClick: false, autoClose: false});*/
         }
         markerBind.push(m);//this is important as it helps in updating new paths
       };
