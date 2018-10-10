@@ -77,14 +77,13 @@ var getPathButton = document.getElementById('getPathButton');
 getPathButton.addEventListener('click', embedData);
 
 function testData(){
-
-var trip_json_location_array=[];//array that stores location property value of each object of trip_json_array
-var testcheck; //checks for location property in each of the objects in the trip_json_array and pushes it futher to the trip_json_location_array
-for(var i=0;i<trip_json.length;i++){
-  testcheck=trip_json[i].location;
-  trip_json_location_array.push(testcheck);
-}
-console.log(trip_json_location_array);//prints trip_json_location_array
+  var trip_json_location_array=[];//array that stores location property value of each object of trip_json_array
+  var testcheck; //checks for location property in each of the objects in the trip_json_array and pushes it futher to the trip_json_location_array
+  for(var i=0;i<trip_json.length;i++){
+     testcheck=trip_json[i].location;
+     trip_json_location_array.push(testcheck);
+  }
+  console.log(trip_json_location_array);//prints trip_json_location_array
 
   var locationTracker="";//variable that gets all the input data of location from trip_json_location_array in the form of string
   for(var i=0;i<trip_json_location_array.length;i++){
@@ -112,8 +111,9 @@ function getData(){// function to input the data
 //function to add new path to the maps
 function addNewPath(){
     var markerNumberIcon, m;//m is the marker variable
-    // marker = [...locationArray]; //copies the locationArray array elements to the marker array
     markerBind = [];// array for adding popup into each of  the marker present on the map 
+    var addOrderUrl = document.getElementById("addOrderUrl");//TESTING anchor tag in the marker popup
+    console.log(addOrderUrl);//checking TESTI
       for (var i = 0; i < locationArray.length; i++) {
           markerNumberIcon =  new L.AwesomeNumberMarkers({//added leaflet number icon to markers
             number: i,
@@ -130,7 +130,8 @@ function addNewPath(){
         }
         else{
            m = L.marker(locationArray[i], {icon: markerNumberIcon}).addTo(mymap);//embed leaflet icon to the marker on the map
-           m.bindPopup('Order No. '+(i)+"<br><a href=''><b>Order URL</b></a>"); /*,{closeOnClick: false, autoClose: false});*/
+           addOrderUrl.href = trip_json[i].order_url;//TESTING adds order url to each of the popup on marker
+           m.bindPopup('Order No. '+(i)+"<br><a id='addOrderUrl'>"+"<b>Order URL</b></a>"); /*,{closeOnClick: false, autoClose: false});*/
         }
         markerBind.push(m);//this is important as it helps in updating new paths
       };
