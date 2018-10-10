@@ -130,7 +130,7 @@ function addNewPath(){
         }
         else{
            m = L.marker(locationArray[i], {icon: markerNumberIcon}).addTo(mymap);//embed leaflet icon to the marker on the map
-           m.bindPopup('Order No. '+(i)+"<br><a href=''><b>Order URL</b></a>"); /*,{closeOnClick: false, autoClose: false});*/
+           m.bindPopup('Order No. '+(i)+"<br><a id='orderUrl'><b>Order URL</b></a>"); /*,{closeOnClick: false, autoClose: false});*/
         }
         markerBind.push(m);//this is important as it helps in updating new paths
       };
