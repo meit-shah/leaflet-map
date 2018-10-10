@@ -24,7 +24,7 @@
   <div id="mapid"></div>
    
   <div id="inputField">
-    <textarea rows="10" cols="50" id="myTextArea" placeholder="Enter (latitude,longitude) here...[PS:Spaces are allowed between the inputs]"></textarea>
+    <textarea rows="10" cols="50" id="myTextArea" placeholder="Click on getPathButton to get the detailed path on the map" ></textarea>
     <br><button id="getPathButton">Get Path</button> 
   </div>
 
@@ -39,30 +39,65 @@
 	}).addTo(mymap);
 
 var locationArray, markerBind, polyline, arrowHead;
-// var trip_json = [
-//   {
-//     'location': '19, 20',
-//     'delivery_sequence': 1,
-//     'user_name': 'Meit Shah',
-//     'order_total': 555,
-//     'packet_no': 20,
-//   },
-//   {
-//     'location': '21, 22',
-//     'delivery_sequence': 2,
-//     'user_name': 'Aayush Shah',
-//     'order_total': 222,
-//     'packet_no': 11,
-//     'order_url': 'https://taazakitchen.com/'
-//   },
-// ]
+var trip_json = [//input data from the csv order file
+  {
+    'location': '19.1329383,72.81175830000006',
+    'delivery_sequence': 1,
+    'user_name': 'Meit Shah',
+    'order_total': 555,
+    'packet_no': 20,
+    'order_url':'https://taazakitchen.com/about'
+  },
+  {
+    'location': '19.1413404,72.81088120000004',
+    'delivery_sequence': 2,
+    'user_name': 'Aayush Shah',
+    'order_total': 222,
+    'packet_no': 11,
+    'order_url': 'https://taazakitchen.com/'
+  },
+    {
+    'location': '19.1116579,72.83458199999995',
+    'delivery_sequence': 3,
+    'user_name': 'Jayesh Shah',
+    'order_total': 333,
+    'packet_no': 13,
+    'order_url': 'https://taazakitchen.com/blog'
+    },
+    {
+    'location': '19.1087053,72.83160780000003',
+    'delivery_sequence': 3,
+    'user_name': 'Hitesh Patel',
+    'order_total': 444,
+    'packet_no': 13,
+    'order_url': 'https://taazakitchen.com/blog'
+    }
+]
 var getPathButton = document.getElementById('getPathButton');
 getPathButton.addEventListener('click', embedData);
 
+function testData(){
+
+var trip_json_location_array=[];//array that stores location property value of each object of trip_json_array
+var testcheck; //checks for location property in each of the objects in the trip_json_array and pushes it futher to the trip_json_location_array
+for(var i=0;i<trip_json.length;i++){
+  testcheck=trip_json[i].location;
+  trip_json_location_array.push(testcheck);
+}
+console.log(trip_json_location_array);//prints trip_json_location_array
+
+  var locationTracker="";//variable that gets all the input data of location from trip_json_location_array in the form of string
+  for(var i=0;i<trip_json_location_array.length;i++){
+   locationTracker += (trip_json_location_array[i]+'\n');//gets all the inputs of the trip_json_location_array
+  }
+  return locationTracker;
+}
+
 function getData(){// function to input the data
-  var inputValues = document.getElementById("myTextArea").value.split('\n');//if input contains line breaks then make input after line break a new input and add it to array as a new index
+  var testInput =  document.getElementById("myTextArea").value = testData();
+  var inputValues = testInput.split('\n');//if input contains line breaks then make input after line break a new input and add it to array as a new index
   locationArray = []; // used to store final latLong data
-  const startingpoint = "19.109222, 72.880394";//coordinates of andheri office shoudl be starting point always
+  const startingpoint = "19.109222, 72.880394";//coordinates of andheri office should be starting point always
   inputValues.unshift(startingpoint);
     for(var i = 0;i < inputValues.length;i++){
       if(inputValues[i]===""){//if spaces are present in the input then ignore and continue to next input
@@ -95,7 +130,7 @@ function addNewPath(){
         }
         else{
            m = L.marker(locationArray[i], {icon: markerNumberIcon}).addTo(mymap);//embed leaflet icon to the marker on the map
-           m.bindPopup('Order No. '+(i)+"<br><a href='https://taazakitchen.com'><b>Order URL</b></a>"); /*,{closeOnClick: false, autoClose: false});*/
+           m.bindPopup('Order No. '+(i)+"<br><a href=''><b>Order URL</b></a>"); /*,{closeOnClick: false, autoClose: false});*/
         }
         markerBind.push(m);//this is important as it helps in updating new paths
       };
