@@ -2,119 +2,126 @@
 <html>
 <head>
 	<title>Map Marker</title>
-   <meta charset="utf-8">
-   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-   <!-- leaflet css and js plugins -->
-   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.3.4/dist/leaflet.css"
-   integrity="sha512-puBpdR0798OZvTTbP4A8Ix/l+A4dHDD0DGqYW6RQ+9jxkRFclaxxQb/SJAWZfWAkuyeQUytO7+7N4QKrDh+drA=="
-   crossorigin=""/>
-   <script src="https://unpkg.com/leaflet@1.3.4/dist/leaflet.js"
-   integrity="sha512-nMMmRyTVoLYqjP9hrbed9S+FzjZHW5gY1TWCHA5ckwXZBadntCNs8kEqAWdrb9O7rxbCaA4lKTIWjDXZxflOcA=="
-   crossorigin=""></script>
-   <!-- leaflet awesome number marker plugins js and css -->
-   <link rel="stylesheet" type="text/css" href="leaflet.awesome-markers.css">
-   <script type="text/javascript" src="leaflet.awesome-markers.js"></script>
-   <!-- polyline decorator plugin -->
-   <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet-polylinedecorator/1.1.0/leaflet.polylineDecorator.min.js"></script>
-   <!-- custom css -->
-   <link rel="stylesheet" type="text/css" href="style.css">
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<!-- leaflet css and js plugins -->
+	<link rel="stylesheet" href="https://unpkg.com/leaflet@1.3.4/dist/leaflet.css"
+	integrity="sha512-puBpdR0798OZvTTbP4A8Ix/l+A4dHDD0DGqYW6RQ+9jxkRFclaxxQb/SJAWZfWAkuyeQUytO7+7N4QKrDh+drA=="
+	crossorigin=""/>
+	<script src="https://unpkg.com/leaflet@1.3.4/dist/leaflet.js"
+	integrity="sha512-nMMmRyTVoLYqjP9hrbed9S+FzjZHW5gY1TWCHA5ckwXZBadntCNs8kEqAWdrb9O7rxbCaA4lKTIWjDXZxflOcA=="
+	crossorigin=""></script>
+	<!-- leaflet awesome number marker plugins js and css -->
+	<link rel="stylesheet" type="text/css" href="leaflet.awesome-markers.css">
+	<script type="text/javascript" src="leaflet.awesome-markers.js"></script>
+	<!-- polyline decorator plugin -->
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet-polylinedecorator/1.1.0/leaflet.polylineDecorator.min.js"></script>
+	<!-- custom css -->
+	<link rel="stylesheet" type="text/css" href="style.css">
 </head>
 <body>
 
-  <div id="mapid"></div>
-   
-  <div id="inputField">
-    <textarea rows="10" cols="50" id="myTextArea" placeholder="Click on getPathButton to get the detailed path on the map" ></textarea>
-    <br><button id="getPathButton">Get Path</button> 
-  </div>
+	<div id="mapid"></div>
 
-<script type="text/javascript">
+	<div id="inputField">
+		<textarea rows="10" cols="50" id="myTextArea" placeholder="Click on getPathButton to get the detailed path on the map" ></textarea>
+		<br><button id="getPathButton">Get Path</button> 
+	</div>
+
+	<script type="text/javascript">
 	var mymap = L.map('mapid').setView([19.1329383,72.81175830000006], 13); // mapview and initial scale
-	            L.tileLayer('https://api.tiles.mapbox.com/v4/{id}/{z}/{x}/{y}.png?access_token=pk.eyJ1IjoibWFwYm94IiwiYSI6ImNpejY4NXVycTA2emYycXBndHRqcmZ3N3gifQ.rJcFIG214AriISLbB6B5aw', {
+	L.tileLayer('https://api.tiles.mapbox.com/v4/{id}/{z}/{x}/{y}.png?access_token=pk.eyJ1IjoibWFwYm94IiwiYSI6ImNpejY4NXVycTA2emYycXBndHRqcmZ3N3gifQ.rJcFIG214AriISLbB6B5aw', {
 		maxZoom: 48,
 		attribution: 'Map data &copy; <a href="https://www.openstreetmap.org/">OpenStreetMap</a> contributors, ' +
-			'<a href="https://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, ' +
-			'Imagery © <a href="https://www.mapbox.com/">Mapbox</a>',
+		'<a href="https://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, ' +
+		'Imagery © <a href="https://www.mapbox.com/">Mapbox</a>',
 		id: 'mapbox.streets'
 	}).addTo(mymap);
 
 var markerBind, polyline; //global variables
 
 function jsonData(){
-var trip_json = [//input data from the csv order file
-  {
-    'location': '19.1329383,72.81175830000006',
-    'delivery_sequence': 1,
-    'user_name': 'Meit Shah',
-    'order_total': 555,
-    'packet_no': 20,
-    'order_url':'https://taazakitchen.com/about'
-  },
-  {
-    'location': '19.1413404,72.81088120000004',
-    'delivery_sequence': 2,
-    'user_name': 'Aayush Shah',
-    'order_total': 222,
-    'packet_no': 11,
-    'order_url': 'https://taazakitchen.com/'
-  },
-  {
-    'location': '19.1116579,72.83458199999995',
-    'delivery_sequence': 3,
-    'user_name': 'Jayesh Shah',
-    'order_total': 333,
-    'packet_no': 13,
-    'order_url': 'https://taazakitchen.com/blog'
-  },
-  {
-    'location': '19.1087053,72.83160780000003',
-    'delivery_sequence': 4,
-    'user_name': 'Hitesh Patel',
-    'order_total': 444,
-    'packet_no': 13,
-    'order_url': 'https://taazakitchen.com/blog'
-  },
-  {
-    'location': '19.1003699,72.82840199999998',
-    'delivery_sequence': 5,
-    'user_name': 'Yogesh Atak',
-    'order_total': 1234,
-    'packet_no': 007,
-    'order_url': 'https://taazakitchen.com/blog'
-   }
-]
+	var trip_json = [//input data from the csv order file
+	{
+		'location': '19.1329383,72.81175830000006',
+		'delivery_sequence': 1,
+		'user_name': 'Meit Shah',
+		'order_total': 555,
+		'packet_no': 20,
+		'order_url':'https://taazakitchen.com/about'
+	},
+	{
+		'location': '19.1413404,72.81088120000004',
+		'delivery_sequence': 2,
+		'user_name': 'Aayush Shah',
+		'order_total': 222,
+		'packet_no': 11,
+		'order_url': 'https://taazakitchen.com/'
+	},
+	{
+		'location': '19.1116579,72.83458199999995',
+		'delivery_sequence': 3,
+		'user_name': 'Jayesh Shah',
+		'order_total': 333,
+		'packet_no': 13,
+		'order_url': 'https://taazakitchen.com/blog'
+	},
+	{
+		'location': '19.1087053,72.83160780000003',
+		'delivery_sequence': 4,
+		'user_name': 'Hitesh Patel',
+		'order_total': 444,
+		'packet_no': 13,
+		'order_url': 'https://taazakitchen.com/blog'
+	},
+	{
+		'location': '19.1003699,72.82840199999998',
+		'delivery_sequence': 5,
+		'user_name': 'Yogesh Atak',
+		'order_total': 1234,
+		'packet_no': 007,
+		'order_url': 'https://taazakitchen.com/blog'
+	}
+	]
 
-var startingpoint = {'location':"19.109222, 72.880394"};//coordinates of andheri office should be starting point always
-trip_json.unshift(startingpoint);	
+	var startingpoint = {'location':"19.109222, 72.880394"};//coordinates of andheri office should be starting point always
+	trip_json.unshift(startingpoint);	
 
-return trip_json;
-
+	return trip_json;
 }
 
-function storeLocationData(){
+function getLocationsAsString(){
 	var trip_json = jsonData();
 	var locationPropValues=""; //location property value in each of the object in trip_json array in string format
-	for(var i=0;i<trip_json.length;i++){
-	  locationPropValues+=trip_json[i].location+'\n'; 
+	for(var i=0; i<trip_json.length; i++){
+		locationPropValues += trip_json[i].location + '\n'; 
 	}
 	return locationPropValues;
 }
 
 function getData(){// function that takes the json data in string format and pushes it in array
-  var testInput =  document.getElementById("myTextArea").value = storeLocationData();//stores location in string values
+  var testInput =  document.getElementById("myTextArea").value = getLocationsAsString();//stores location in string values
   var inputValues = testInput.split('\n');//if input contains line breaks then make input after line break a new input and add it to array as a new index
   var locationArray = []; // used to store final latLong data
   // var startingpoint = "19.109222, 72.880394";
   // inputValues.unshift(startingpoint);
-    for(var i = 0;i < inputValues.length;i++){
+  for(var i = 0;i < inputValues.length;i++){
       if(inputValues[i]===""){//if spaces are present in the input then ignore and continue to next input
-        continue;
+      	continue;
       }
       temp = inputValues[i].split(/[\s,]+/);//temp array that stores input values as string but if the string has spaces or , in between them then again split them and make them a unique input
       locationArray.push(temp);//finally add the inputs to a new array and return it to the calling function
     }
-   return locationArray;
+    return locationArray;
   }
+
+
+function orderDetails(){//display order details on the map marker
+	// getData();
+	for (var i = 0; i < locationArray.length; i++) {
+		
+	}
+}
 
 //function to add new path to the maps
 function addNewPath(){
@@ -123,57 +130,69 @@ function addNewPath(){
     var locationArray = getData();//gets location array from getData function
     // var orderDetailsLabelArray=['Username:','Location:','Order Total:','Packet No:'];
     markerBind = [];// array for adding popup into each of  the marker present on the map 
-      for (var i = 0; i < locationArray.length; i++) {
-          markerNumberIcon =  new L.AwesomeNumberMarkers({//added leaflet number icon to markers
-            number: i,
-            markerColor: "darkblue"});
-          startEndMarkerIcon = new L.AwesomeNumberMarkers({//adding red icon marker to start and end markers
-            number: i,
-            markerColor: "red"});
-        if (i===0) {
-          m = L.marker(locationArray[i], {icon: startEndMarkerIcon}).addTo(mymap);
-          m.bindPopup('<b>Starting Point Andheri Office</b>').openPopup();//default starting point
-        }else if(i===locationArray.length-1){
-          m = L.marker(locationArray[i], {icon: startEndMarkerIcon}).addTo(mymap);
-          orderDetails = 'End Point <b>Order No</b>: '+(i)+"<br><b>Username</b>:"+trip_json[i].user_name+"<br><b>Location</b>:"+trip_json[i].location+"<br><b>Order Total</b>:"+trip_json[i].order_total+"<br><b>Packet No</b>:"+trip_json[i].packet_no+"<br><a class='orderUrl'>"+trip_json[i].order_url+"</a>";//details of the last order in the marker popup
-          m.bindPopup(orderDetails);
-        }
-        else{
-           m = L.marker(locationArray[i], {icon: markerNumberIcon}).addTo(mymap);//embed leaflet icon to the marker on the map
-           orderDetails = '<b>Order No</b>: '+(i)+"<br><b>Username</b>:"+trip_json[i].user_name+"<br><b>Location</b>:"+trip_json[i].location+"<br><b>Order Total</b>:"+trip_json[i].order_total+"<br><b>Packet No</b>:"+trip_json[i].packet_no+"<br><a class='orderUrl'>"+trip_json[i].order_url+"</a>";//details shown in the all the marker popups in the map
-           m.bindPopup(orderDetails); /*,{closeOnClick: false, autoClose: false});*/
-        }
-        markerBind.push(m);//this is important as it helps in updating new paths
-      };
+    for (var i = 0; i < locationArray.length; i++) {
+      markerNumberIcon =  new L.AwesomeNumberMarkers({//added leaflet number icon to markers
+											    	number: i,
+											    	markerColor: "darkblue"});
+      startEndMarkerIcon = new L.AwesomeNumberMarkers({//adding red icon marker to start and end markers
+										      	number: i,
+										      	markerColor: "red"});
+      if (i===0) {
+      	m = L.marker(locationArray[i], {icon: startEndMarkerIcon}).addTo(mymap);
+      	m.bindPopup('<b>Starting Point Andheri Office</b>').openPopup();//default starting point
+      } else if(i === locationArray.length-1) {
+      	m = L.marker(locationArray[i], {icon: startEndMarkerIcon}).addTo(mymap);
+        orderDetails = 'End Point <b>Order No</b>: '+(i)+"<br>"
+        orderDetails += "<b>Username</b>:"+trip_json[i].user_name+"<br>"
+        orderDetails += "<b>Location</b>:"+trip_json[i].location+"<br>"
+        orderDetails += "<b>Order Total</b>:"+trip_json[i].order_total+"<br>"
+        orderDetails += "<b>Packet No</b>:"+trip_json[i].packet_no+"<br>"
+        orderDetails += "<a href='"+trip_json[i].order_url+"' class='orderUrl'>"+trip_json[i].order_url+"</a>";//details of the last order in the marker popup
+        m.bindPopup(orderDetails);
+      } else {
+        m = L.marker(locationArray[i], {icon: markerNumberIcon}).addTo(mymap);//embed leaflet icon to the marker on the map
+         // orderDetails = '<b>Order No</b>: '+(i)+"<br><b>Username</b>:"+trip_json[i].user_name+"<br><b>Location</b>:"+trip_json[i].location+"<br><b>Order Total</b>:"+trip_json[i].order_total+"<br><b>Packet No</b>:"+trip_json[i].packet_no+"<br><a href='"+trip_json[i].order_url+"' class='orderUrl'>"+trip_json[i].order_url+"</a>";//details shown in the all the marker popups in the map
+        orderDetails = ""
+				for (let key in trip_json[i]) {
+					if(/http[s]/.test(trip_json[i][key])) {
+						orderDetails +='<b>'+key+'</b>: <a href="'+trip_json[i][key]+'">LINK</a><br/>';	
+					} else {
+						orderDetails +='<b>'+key+'</b>:'+trip_json[i][key]+'<br/>';	
+					}
+				}
+   			m.bindPopup(orderDetails); /*,{closeOnClick: false, autoClose: false});*/
+     	}
+      markerBind.push(m);//thi	s is important as it helps in updating new paths
+    };
     polyline = L.polyline(locationArray).addTo(mymap);  // a line connecting each of the markers and adding it to the map
     var arrowHead =  L.polylineDecorator(polyline, {//adds polyline arrowhead to each of the polyline on the map
-        patterns: [
-                   {
-                      offset: 0,//start of the arrowhead
-                      repeat: 85,//repeats the arrowhead at this distance
-                      symbol: L.Symbol.arrowHead({pixelSize: 15, polygon: false, pathOptions: {stroke: true}})
-                   }
-                  ]
+	    	patterns: [
+	    	{
+			    offset: 0,//start of the arrowhead
+			    repeat: 85,//repeats the arrowhead at this distance
+			    symbol: L.Symbol.arrowHead({pixelSize: 15, polygon: false, pathOptions: {stroke: true}})
+	      }
+	    ]
     }).addTo(mymap);
     return arrowHead; //return the path on function call
-}
+  }
 
 function embedData(){//function to embed the data, taken from getData function, to the maps.
-  getData();
-  var arrowHead = addNewPath();
-// to check if the map has an existing layer in the map
-// if the layers of polyline/arrowHead is present and markerbind length is greater than 0 then remove them 
-// else add the new markers and layers in to the map
-if (mymap.hasLayer(polyline) && mymap.hasLayer(arrowHead) && markerBind.length>0) {
-  for(var i = 0; i < markerBind.length; i++) {
-    mymap.removeLayer(markerBind[i]);//removes all the markers from the map
-  } 
-  mymap.removeLayer(polyline);//removes all the inputValues connecting the markers from the map
-  mymap.removeLayer(arrowHead);//removes all the arrowheads from the polyline
-  addNewPath();//and add the latest inputs to the maps
-}else{
-  addNewPath();//add the new inputs to the maps as there are no existing layers present
-  }
+	// getData();
+	var arrowHead = addNewPath();
+	// to check if the map has an existing layer in the map
+	// if the layers of polyline/arrowHead is present and markerbind length is greater than 0 then remove them 
+	// else add the new markers and layers in to the map
+	if (mymap.hasLayer(polyline) && mymap.hasLayer(arrowHead) && markerBind.length>0) {
+		for(var i = 0; i < markerBind.length; i++) {
+	    mymap.removeLayer(markerBind[i]);//removes all the markers from the map
+	  } 
+	  mymap.removeLayer(polyline);//removes all the inputValues connecting the markers from the map
+	  mymap.removeLayer(arrowHead);//removes all the arrowheads from the polyline
+	  addNewPath();//and add the latest inputs to the maps
+	} else{
+	  	addNewPath();//add the new inputs to the maps as there are no existing layers present
+	}
 }
 
 var getPathButton = document.getElementById('getPathButton');
@@ -191,6 +210,6 @@ getPathButton.addEventListener('click', embedData);
 19.0722011,72.833708
 19.1063489,72.84184110000001
 19.1286973,72.84397960000001
- -->
+-->
 </body>
 </html>
